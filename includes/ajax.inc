@@ -11,7 +11,7 @@ function whq_trumps_ajax_handler() {
   $whq_trumps_orderby = sanitize_text_field($_POST['whq_trumps_orderby']);
 
   // Reconstruct the body of the deck with our new POSTed parameters.
-  $ordered_deck = whq_trumps_card_body($whq_card_deck,'DESC', $whq_trumps_orderby);
+  $ordered_deck = whq_trumps_card_body($whq_card_deck,'ASC', $whq_trumps_orderby);
 
   // Push the reordered/reconstructed card list to the Front-End.
   wp_send_json($ordered_deck);

@@ -14,6 +14,7 @@ require_once('includes/taxonomy.inc');
 require_once('includes/shortcodes.inc');
 require_once('includes/scripts.inc');
 require_once('includes/ajax.inc');
+require_once('includes/thumbnails.inc');
 
 /**
  * register_activation_hook().

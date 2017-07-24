@@ -16,6 +16,11 @@ function whq_trumps_deck($atts){
 							<option value="title">Name</option>
 							<option value="rand">Random</option>
 						</select>
+						<div class="view-cnt">
+						  <span class="whq-deck-sort card-control">View by:</span>
+              <button id="whqtrump-list" class="list">List</button>
+              <button id="whqtrump-grid" class="grid list-active">Grid</button>
+            </div>
 						</div>';
   $whq_output .= whq_trumps_card_body($whq_atts['deck']);
   $whq_output .= '</div>';
@@ -30,7 +35,7 @@ function whq_trumps_deck($atts){
  * @param string $orderby
  * @return string. Top trumps card output.
  */
-function whq_trumps_card_body($deck, $order = 'DESC', $orderby = 'ID') {
+function whq_trumps_card_body($deck, $order = 'ASC', $orderby = 'ID') {
   // Set our defaults.
   $whq_post_args = [
     'post_type' => 'whq_trumps',
@@ -57,23 +62,45 @@ function whq_trumps_card_body($deck, $order = 'DESC', $orderby = 'ID') {
 
       // Get our trump card title.
       // I believe this can be improved to use load_template();
-      $whq_output .= '<li class="whqtrump--card whqtrump--list">';
-      $whq_output .= get_the_title();
+      $whq_output .= '<li class="whqtrump--card">';
+      $whq_output .= '<header class="whqtrump--intro">';
+      if (has_post_thumbnail()) {
+        // Thumbnail with custom image size.
+        $whq_output .= get_the_post_thumbnail($post->ID, 'whq_trumps_card');
+      }
+      $whq_output .= '<h3 class="whqtrump--title">' . get_the_title() . '</h3>';
+      $whq_output .= '<p>' . get_the_excerpt() . '</p>';
+      $whq_output .= '</header>';
+
+      // Get all custom fields for our posts.
+      $custom_fields = get_post_meta($post->ID, '', true);
+
+      $whq_output .= '<div class="whqtrump--card-content">';
 
       // Loop through all custom fields - we do this because a user can create
       // multiple cards and category all of which could include different values.
-      $custom_fields = get_post_meta($post->ID, '', true);
       if (!empty($custom_fields)) {
+        $whq_output .= '<div class="whqtrump--card-togglecontent">';
         $whq_output .= '<dl>';
         foreach ($custom_fields as $key => $value) {
+          $data_name = str_replace(' ', '-', strtolower($key));
+          $data_level = str_replace(' ', '-', strtolower($value[0]));
+          $data_level_numeric = preg_replace('/[^0-9]/','', $data_level);
           // Ignore WP custom fields e.g. _edit_*
           if (substr($key, 0, 1) !== '_') {
-            $whq_output .= '<dt>' . $key . '</dt>';
-            $whq_output .= '<dd>' . $value[0] . '</dd>';
+            $whq_output .= '<dt data-name="' . $data_name . '">' . $key . ' (' . $value[0] . ')</dt>';
+            $whq_output .= '<dd data-stat="stat">';
+            $whq_output .= '<div class="whqtrump-stat whqtrump-stat-' . $data_name . '" data-level="' . $data_level_numeric . '"></div>';
+            $whq_output .= '</dd>';
           }
         }
         $whq_output .= '</dl>';
+        $whq_output .= '</div>';
       }
+
+      // Card content wrapper.
+      $whq_output .= '</div>';
+
       $whq_output .= '</li>';
     }
 

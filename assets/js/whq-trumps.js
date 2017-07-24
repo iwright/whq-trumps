@@ -27,5 +27,13 @@
         }
       });
     });
+
+    // List and grid view.
+    $('#whqtrump-grid').on('click', function() {
+      $('.whqtrump--card').removeClass('whqtrump--list');
+    });
+    $('#whqtrump-list').on('click', function() {
+      $('.whqtrump--card').addClass('whqtrump--list');
+    });
   });
 })(jQuery);
